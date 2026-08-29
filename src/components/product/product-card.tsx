@@ -1,29 +1,63 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { Heart, ShoppingBag } from "lucide-react";
 import type { StorefrontProduct } from "@/lib/catalog";
 import { inr } from "@/lib/catalog";
+import { useCart } from "@/components/cart/cart-context";
+import { useWishlist } from "@/components/wishlist/wishlist-context";
+import { Badge } from "@/components/ui/badge";
 
-function badgeClass(badge: string) {
+function badgeVariant(badge: string) {
   switch (badge) {
     case "new":
-      return "bg-gold text-ink";
+      return "default";
     case "bestseller":
-      return "bg-pink text-white";
+      return "success";
     case "limited":
-      return "bg-charcoal text-foreground border border-border";
+      return "destructive";
     default:
-      return "bg-muted text-foreground";
+      return "secondary";
   }
 }
 
 export function ProductCard({ product }: { product: StorefrontProduct }) {
+  const [hovered, setHovered] = useState(false);
+  const { openCart, addItem } = useCart();
+  const { toggle, isInWishlist } = useWishlist();
+
   const discount =
     product.compareAtPrice && product.compareAtPrice > product.price
       ? Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)
       : 0;
+
+  const hasAltImage = product.images.length > 1;
+
+  function handleQuickAdd(e: React.MouseEvent) {
+    e.preventDefault();
+    if (!product.inStock || product.sizes.length === 0) return;
+    const size = product.sizes[0];
+    const color = product.colors[0]?.name || "";
+    const variant = product.variants.find((v) => v.size === size && v.color === color);
+    if (!variant || !variant.inStock) return;
+    addItem({
+      productId: product.id,
+      variantId: variant.id,
+      name: product.name,
+      slug: product.slug,
+      image: product.image,
+      size,
+      color,
+      price: variant.price,
+      quantity: 1,
+    });
+    openCart();
+  }
+
+  const inWishlist = isInWishlist(product.id);
 
   return (
     <motion.div
@@ -31,8 +65,9 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-      whileHover={{ y: -6 }}
       className="group"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
     >
       <Link href={`/product/${product.slug}`} className="block">
         <div className="relative aspect-[3/4] overflow-hidden rounded-2xl bg-muted">
@@ -45,18 +80,68 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
             unoptimized={product.image.startsWith("/")}
           />
 
+          <AnimatePresence>
+            {hovered && hasAltImage && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="absolute inset-0"
+              >
+                <Image
+                  src={product.images[1]}
+                  alt={`${product.name} alt`}
+                  fill
+                  sizes="(max-width: 768px) 50vw, 25vw"
+                  className="object-cover"
+                  unoptimized={product.images[1]?.startsWith("/")}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           {product.badges.length > 0 && (
             <div className="absolute left-3 top-3 flex flex-wrap gap-2">
               {product.badges.slice(0, 2).map((badge) => (
-                <span
-                  key={badge}
-                  className={`rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider ${badgeClass(badge)}`}
-                >
+                <Badge key={badge} variant={badgeVariant(badge) as never}>
                   {badge}
-                </span>
+                </Badge>
               ))}
             </div>
           )}
+
+          <div className="absolute right-3 top-3 flex flex-col gap-2 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                toggle({
+                  productId: product.id,
+                  slug: product.slug,
+                  name: product.name,
+                  image: product.image,
+                  price: product.price,
+                });
+              }}
+              aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
+              className={`flex h-9 w-9 items-center justify-center rounded-full border border-border bg-background/80 backdrop-blur-sm transition-colors ${
+                inWishlist ? "bg-pink text-white border-pink" : "text-foreground hover:bg-gold hover:text-ink"
+              }`}
+            >
+              <Heart className="h-4 w-4" fill={inWishlist ? "currentColor" : "none"} />
+            </button>
+            {product.inStock && product.sizes.length > 0 && (
+              <button
+                type="button"
+                onClick={handleQuickAdd}
+                aria-label="Quick add to bag"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-background/80 text-foreground backdrop-blur-sm transition-colors hover:bg-gold hover:text-ink"
+              >
+                <ShoppingBag className="h-4 w-4" />
+              </button>
+            )}
+          </div>
         </div>
 
         <div className="mt-4 space-y-1">
@@ -90,7 +175,7 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
 
           {product.colors.length > 0 && (
             <div className="flex gap-1.5 pt-2">
-              {product.colors.map((color) => (
+              {product.colors.slice(0, 4).map((color) => (
                 <span
                   key={color.name}
                   aria-label={color.name}
@@ -98,6 +183,9 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
                   style={{ backgroundColor: color.hex }}
                 />
               ))}
+              {product.colors.length > 4 && (
+                <span className="text-xs text-muted-foreground">+{product.colors.length - 4}</span>
+              )}
             </div>
           )}
         </div>

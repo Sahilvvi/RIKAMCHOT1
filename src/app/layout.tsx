@@ -2,8 +2,12 @@ import type { Metadata } from "next";
 import { Inter, Space_Grotesk, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/header";
+import { Footer } from "@/components/layout/footer";
+import { MobileNav } from "@/components/layout/mobile-nav";
 import { CartProvider } from "@/components/cart/cart-context";
 import { CartDrawer } from "@/components/cart/cart-drawer";
+import { WishlistProvider } from "@/components/wishlist/wishlist-context";
+import { PageTransition } from "@/components/layout/page-transition";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -46,11 +50,15 @@ export default function RootLayout({
       lang="en"
       className={`${inter.variable} ${spaceGrotesk.variable} ${instrumentSerif.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-background text-foreground">
+      <body className="min-h-full flex flex-col bg-background pb-16 text-foreground md:pb-0">
         <CartProvider>
-          <Header />
-          {children}
-          <CartDrawer />
+          <WishlistProvider>
+            <Header />
+            <PageTransition>{children}</PageTransition>
+            <CartDrawer />
+            <Footer />
+            <MobileNav />
+          </WishlistProvider>
         </CartProvider>
       </body>
     </html>

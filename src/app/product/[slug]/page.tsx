@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getProductBySlug } from "@/lib/catalog";
+import { getProductBySlug, getRecommendedProducts } from "@/lib/catalog";
 import { ProductDetail } from "@/components/product/product-detail";
 
 type Params = Promise<{ slug: string }>;
@@ -10,5 +10,7 @@ export default async function ProductPage({ params }: { params: Params }) {
 
   if (!product) notFound();
 
-  return <ProductDetail product={product} />;
+  const recommendations = await getRecommendedProducts(product, 6);
+
+  return <ProductDetail product={product} recommendations={recommendations} />;
 }

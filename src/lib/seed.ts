@@ -130,6 +130,9 @@ export const SEED_PRODUCTS: StorefrontProduct[] = rawSeed.map((p, i) => {
     popularity: p.reviews + p.rating * 40 + (p.isBestSeller ? 200 : 0),
     createdAt: Date.now() - i * 86_400_000,
     variants: buildVariants(raw),
+    sellerName: "RIKAMCHOT House",
+    sellerVerified: true,
+    sellerRating: 4.9,
   };
 });
 

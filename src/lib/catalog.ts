@@ -46,6 +46,9 @@ export type StorefrontProduct = {
   popularity: number;
   createdAt: number;
   variants: ProductVariant[];
+  sellerName?: string;
+  sellerVerified?: boolean;
+  sellerRating?: number;
 };
 
 export type StorefrontCategory = {
@@ -288,6 +291,9 @@ function buildStorefrontProduct(p: RawProduct, categoryMap: Map<string, Storefro
     popularity: numeric(p.popularity),
     createdAt: new Date(p.published_at || p.created_at).getTime() || 0,
     variants,
+    sellerName: "RIKAMCHOT House",
+    sellerVerified: true,
+    sellerRating: 4.9,
   };
 }
 
@@ -434,6 +440,42 @@ export async function getProductBySlug(slug: string): Promise<StorefrontProduct 
     }
   }
   return SEED_PRODUCTS.find((p) => p.slug === slug);
+}
+
+export async function getRecommendedProducts(
+  product: StorefrontProduct,
+  limit: number = 6
+): Promise<StorefrontProduct[]> {
+  const all = await getProducts();
+  const scored = all
+    .filter((p) => p.id !== product.id)
+    .map((p) => {
+      let score = 0;
+      if (p.rootCategory === product.rootCategory) score += 3;
+      if (p.collection === product.collection) score += 2;
+      if (p.categorySlug === product.categorySlug) score += 1;
+      return { p, score };
+    })
+    .sort((a, b) => b.score - a.score || b.p.popularity - a.p.popularity)
+    .slice(0, limit)
+    .map((s) => s.p);
+  return scored;
+}
+
+export async function searchProducts(query: string, limit: number = 20): Promise<StorefrontProduct[]> {
+  const q = query.trim().toLowerCase();
+  if (!q) return [];
+  const all = await getProducts();
+  return all
+    .filter(
+      (p) =>
+        p.name.toLowerCase().includes(q) ||
+        p.categoryName.toLowerCase().includes(q) ||
+        p.collection.toLowerCase().includes(q) ||
+        p.rootCategory.toLowerCase().includes(q) ||
+        (p.sellerName && p.sellerName.toLowerCase().includes(q))
+    )
+    .slice(0, limit);
 }
 
 export async function getProductById(id: string): Promise<StorefrontProduct | undefined> {

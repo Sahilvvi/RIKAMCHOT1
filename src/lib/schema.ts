@@ -55,7 +55,7 @@ export type ProductVariant = {
   compareAtPrice?: number;
   inventory: number;
   attributes: Record<string, string | number | boolean>; // attribute slug -> value
-  media: string[]; // fallback to product media when empty
+  media: ProductMedia[]; // fallback to product media when empty
 };
 
 export type ProductMedia = {

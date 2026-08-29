@@ -1,0 +1,102 @@
+@import "tailwindcss";
+
+:root {
+  --radius: 1rem;
+
+  /* Brand palette */
+  --background: oklch(0.09 0.005 260);
+  --ink: oklch(0.06 0.004 260);
+  --charcoal: oklch(0.16 0.006 260);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.12 0.006 260);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.12 0.006 260);
+  --popover-foreground: oklch(0.985 0 0);
+
+  --gold: oklch(0.82 0.13 85);
+  --gold-soft: oklch(0.72 0.11 82);
+  --pink: oklch(0.68 0.24 355);
+
+  --primary: var(--gold);
+  --primary-foreground: oklch(0.09 0.005 260);
+  --secondary: var(--charcoal);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.18 0.006 260);
+  --muted-foreground: oklch(0.68 0.008 260);
+  --accent: var(--pink);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.6 0.24 25);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 12%);
+  --ring: var(--gold);
+}
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
+  --color-pink: var(--pink);
+  --color-charcoal: var(--charcoal);
+  --color-ink: var(--ink);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-instrument-serif), ui-serif, Georgia, serif;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+  html, body {
+    width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  img, video, canvas, svg {
+    max-width: 100%;
+  }
+  ::selection {
+    background: var(--gold);
+    color: var(--ink);
+  }
+}
+
+@utility text-gradient-gold {
+  background: linear-gradient(100deg, oklch(0.9 0.13 88) 0%, oklch(0.72 0.14 78) 55%, oklch(0.68 0.24 355) 120%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}

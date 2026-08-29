@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter, Space_Grotesk, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/header";
+import { CartProvider } from "@/components/cart/cart-context";
+import { CartDrawer } from "@/components/cart/cart-drawer";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -45,8 +47,11 @@ export default function RootLayout({
       className={`${inter.variable} ${spaceGrotesk.variable} ${instrumentSerif.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
-        <Header />
-        {children}
+        <CartProvider>
+          <Header />
+          {children}
+          <CartDrawer />
+        </CartProvider>
       </body>
     </html>
   );

@@ -8,6 +8,7 @@ import { CartProvider } from "@/components/cart/cart-context";
 import { CartDrawer } from "@/components/cart/cart-drawer";
 import { WishlistProvider } from "@/components/wishlist/wishlist-context";
 import { PageTransition } from "@/components/layout/page-transition";
+import { CustomCursor } from "@/components/layout/custom-cursor";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -55,6 +56,7 @@ export default function RootLayout({
           <WishlistProvider>
             <Header />
             <PageTransition>{children}</PageTransition>
+            <CustomCursor />
             <CartDrawer />
             <Footer />
             <MobileNav />

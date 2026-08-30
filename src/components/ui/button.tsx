@@ -8,15 +8,17 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-gold text-ink hover:bg-gold-soft hover:shadow-[0_0_24px_rgba(201,162,76,0.25)] active:scale-[0.98]",
+          "bg-gold text-ink hover:bg-gold-soft hover:shadow-[0_0_28px_rgba(201,162,76,0.22)] active:scale-[0.98]",
         secondary:
-          "bg-charcoal text-foreground border border-border hover:border-gold/30 hover:bg-muted active:scale-[0.98]",
+          "bg-secondary text-secondary-foreground border border-border hover:border-gold/30 hover:bg-muted active:scale-[0.98]",
         outline:
-          "border border-border bg-background hover:border-gold/40 hover:bg-gold/5 text-foreground active:scale-[0.98]",
+          "border border-border bg-background hover:border-gold/50 hover:bg-gold/5 text-foreground active:scale-[0.98]",
         ghost:
-          "hover:bg-gold/5 hover:text-gold text-foreground active:scale-[0.98]",
+          "hover:bg-gold/5 hover:text-gold-dark text-foreground active:scale-[0.98]",
         destructive:
           "bg-pink text-white hover:bg-pink/90 active:scale-[0.98]",
+        white:
+          "bg-white text-ink border border-border hover:border-gold/40 hover:shadow-[0_4px_20px_rgba(0,0,0,0.05)] active:scale-[0.98]",
       },
       size: {
         default: "h-11 px-6 py-2.5",
@@ -34,9 +36,7 @@ const buttonVariants = cva(
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
-  asChild?: boolean;
-}
+    VariantProps<typeof buttonVariants> {}
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, ...props }, ref) => {

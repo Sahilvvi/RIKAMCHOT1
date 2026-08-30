@@ -24,7 +24,7 @@ export function Header() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       className={`fixed left-0 right-0 top-0 z-50 flex items-center justify-between px-6 py-4 lg:px-10 ${
-        isHome ? "" : "glass"
+        isHome ? "bg-transparent" : "glass-white"
       }`}
     >
       <Link href="/" className="font-display text-xl font-semibold tracking-tight text-foreground lg:text-2xl">

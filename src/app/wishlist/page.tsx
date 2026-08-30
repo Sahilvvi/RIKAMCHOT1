@@ -6,7 +6,8 @@ import { X, ShoppingBag, Heart } from "lucide-react";
 import { useWishlist } from "@/components/wishlist/wishlist-context";
 import { useCart } from "@/components/cart/cart-context";
 import { inr } from "@/lib/catalog";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export default function WishlistPage() {
   const { items, remove } = useWishlist();
@@ -24,8 +25,8 @@ export default function WishlistPage() {
             <Heart className="h-16 w-16 text-muted-foreground/30" />
             <p className="mt-4 text-lg font-medium text-foreground">Your wishlist is empty</p>
             <p className="mt-1 text-muted-foreground">Save your favorite pieces to shop later.</p>
-            <Link href="/shop/fashion" className="mt-6">
-              <Button>Explore products</Button>
+            <Link href="/shop/fashion" className={cn(buttonVariants({ variant: "default" }), "mt-6")}>
+              Explore products
             </Link>
           </div>
         ) : (

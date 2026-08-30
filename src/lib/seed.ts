@@ -66,6 +66,20 @@ const rawSeed: Omit<RawSeedProduct, "id" | "image" | "createdAt" | "popularity">
   { name: "Regalia Jogger", price: 3499, category: "Bottoms", rootCategory: "fashion", collection: "Heritage", sizes: ["S","M","L","XL"], colors: [{name:"Black",hex:"#0a0a0b"}], material: "Tech Fleece", inStock: true, isBestSeller: true, rating: 4.7, reviews: 189 },
   { name: "Crown Belt Bag", price: 2299, category: "Accessories", rootCategory: "fashion", collection: "Atelier", sizes: ["One"], colors: [{name:"Black",hex:"#0a0a0b"},{name:"Gold",hex:"#c9a24c"}], material: "Vegan Leather", inStock: true, isNew: true, rating: 4.6, reviews: 12 },
   { name: "Court Sneaker — Onyx", price: 6499, category: "Footwear", rootCategory: "fashion", collection: "Heritage", sizes: ["8","9","10","11"], colors: [{name:"Black",hex:"#0a0a0b"}], material: "Leather", inStock: true, rating: 4.8, reviews: 56 },
+
+  // Technology
+  { name: "Aural One Headphones", price: 14999, compareAt: 17999, category: "Audio", rootCategory: "tech", collection: "Sonic", sizes: ["One"], colors: [{name:"Black",hex:"#0a0a0b"},{name:"Gold",hex:"#c9a24c"}], material: "Anodised aluminium + memory foam", inStock: true, isBestSeller: true, rating: 4.9, reviews: 312 },
+  { name: "Pulse Smartwatch", price: 8999, category: "Wearables", rootCategory: "tech", collection: "Sonic", sizes: ["One"], colors: [{name:"Midnight",hex:"#111317"},{name:"Rose Gold",hex:"#c9a24c"}], material: "Sapphire glass + aluminium", inStock: true, isNew: true, rating: 4.7, reviews: 156 },
+  { name: "Sonic Portable Speaker", price: 6999, compareAt: 8499, category: "Audio", rootCategory: "tech", collection: "Sonic", sizes: ["One"], colors: [{name:"Charcoal",hex:"#262626"},{name:"Cream",hex:"#f4f1ea"}], material: "Woven fabric + steel", inStock: true, isLimited: true, rating: 4.8, reviews: 98 },
+  { name: "Vortex Gaming Mouse", price: 4999, category: "Gaming", rootCategory: "tech", collection: "Digitron", sizes: ["One"], colors: [{name:"Black",hex:"#0a0a0b"}], material: "Matte polycarbonate", inStock: true, rating: 4.6, reviews: 74 },
+  { name: "Cipher Mechanical Keyboard", price: 11999, category: "Computer Accessories", rootCategory: "tech", collection: "Digitron", sizes: ["One"], colors: [{name:"Grey",hex:"#5a5a5a"},{name:"Cream",hex:"#f4f1ea"}], material: "PBT keycaps + aluminium plate", inStock: true, isNew: true, rating: 4.8, reviews: 42 },
+
+  // Lifestyle
+  { name: "Nebula Smartphone Stand", price: 2499, category: "Desk", rootCategory: "lifestyle", collection: "Atelier Home", sizes: ["One"], colors: [{name:"Oak",hex:"#c9a24c"},{name:"Black",hex:"#0a0a0b"}], material: "Solid oak + steel", inStock: true, rating: 4.5, reviews: 61 },
+  { name: "Lumina Desk Lamp", price: 4999, compareAt: 5999, category: "Lighting", rootCategory: "lifestyle", collection: "Atelier Home", sizes: ["One"], colors: [{name:"White",hex:"#f5f5f0"},{name:"Charcoal",hex:"#262626"}], material: "Powder-coated steel", inStock: true, isBestSeller: true, rating: 4.8, reviews: 144 },
+  { name: "Nomad Travel Kit", price: 3499, category: "Travel", rootCategory: "lifestyle", collection: "Wander", sizes: ["One"], colors: [{name:"Olive",hex:"#4b5320"},{name:"Sand",hex:"#d8cfc4"}], material: "Recycled canvas", inStock: true, isNew: true, rating: 4.6, reviews: 38 },
+  { name: "Aroma Ceramic Diffuser", price: 3999, category: "Home", rootCategory: "lifestyle", collection: "Wander", sizes: ["One"], colors: [{name:"Bone",hex:"#e8e4dc"},{name:"Charcoal",hex:"#262626"}], material: "Hand-glazed ceramic", inStock: true, isLimited: true, rating: 4.7, reviews: 89 },
+  { name: "Silhouette Laptop Sleeve", price: 2299, category: "Travel", rootCategory: "lifestyle", collection: "Atelier Home", sizes: ["13\"","14\"","15\"","16\""], colors: [{name:"Black",hex:"#0a0a0b"},{name:"Cream",hex:"#f4f1ea"}], material: "Felt + vegan leather", inStock: true, rating: 4.5, reviews: 52 },
 ];
 
 function buildVariants(p: RawSeedProduct): ProductVariant[] {
@@ -116,7 +130,7 @@ export const SEED_PRODUCTS: StorefrontProduct[] = rawSeed.map((p, i) => {
     compareAtPrice: p.compareAt,
     currency: "INR",
     image,
-    images: [image],
+    images: [image, imgs[(i + 1) % imgs.length]],
     sizes: p.sizes,
     colors: p.colors,
     material: p.material,

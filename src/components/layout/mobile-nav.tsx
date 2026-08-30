@@ -17,8 +17,8 @@ export function MobileNav() {
   const { openCart, count } = useCart();
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 glass md:hidden">
-      <nav className="mx-auto flex max-w-md items-center justify-around px-2 pb-safe pt-2">
+    <div className="fixed bottom-0 left-0 right-0 z-50 glass-white md:hidden">
+      <nav className="mx-auto flex max-w-md items-center justify-around px-2 pb-2 pt-2">
         {nav.map((item) => {
           const active = pathname === item.href;
           const Icon = item.icon;
@@ -26,8 +26,8 @@ export function MobileNav() {
             <Link
               key={item.label}
               href={item.href}
-              className={`flex flex-col items-center gap-1 py-2.5 px-3 text-[10px] font-medium transition-colors ${
-                active ? "text-gold" : "text-muted-foreground"
+              className={`flex flex-col items-center gap-1 rounded-xl py-2.5 px-3 text-[10px] font-medium transition-colors ${
+                active ? "text-gold-dark" : "text-muted-foreground"
               }`}
             >
               <Icon className="h-5 w-5" />

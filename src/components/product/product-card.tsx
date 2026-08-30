@@ -61,15 +61,13 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-60px" }}
-      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      whileHover={{ y: -8 }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
       className="group"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      <Link href={`/product/${product.slug}`} className="block">
+      <Link href={`/product/${product.slug}`} className="block" data-cursor="view">
         <div className="relative aspect-[3/4] overflow-hidden rounded-2xl bg-muted">
           <Image
             src={product.image}
@@ -179,7 +177,7 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
                 <span
                   key={color.name}
                   aria-label={color.name}
-                  className="h-4 w-4 rounded-full border border-white/10"
+                  className="h-4 w-4 rounded-full border border-foreground/10"
                   style={{ backgroundColor: color.hex }}
                 />
               ))}

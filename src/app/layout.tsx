@@ -7,6 +7,7 @@ import { MobileNav } from "@/components/layout/mobile-nav";
 import { CartProvider } from "@/components/cart/cart-context";
 import { CartDrawer } from "@/components/cart/cart-drawer";
 import { WishlistProvider } from "@/components/wishlist/wishlist-context";
+import { OrderProvider } from "@/components/orders/order-context";
 import { PageTransition } from "@/components/layout/page-transition";
 import { CustomCursor } from "@/components/layout/custom-cursor";
 import { ScrollProgress } from "@/components/layout/scroll-progress";
@@ -58,7 +59,8 @@ export default function RootLayout({
         <AuthProvider>
           <CartProvider>
             <WishlistProvider>
-              <Header />
+              <OrderProvider>
+                <Header />
               <ScrollProgress />
               <AmbientMotion />
               <PageTransition>{children}</PageTransition>
@@ -66,6 +68,7 @@ export default function RootLayout({
               <CartDrawer />
               <Footer />
               <MobileNav />
+              </OrderProvider>
             </WishlistProvider>
           </CartProvider>
         </AuthProvider>

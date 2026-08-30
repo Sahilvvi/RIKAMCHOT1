@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, useScroll, useTransform, useSpring, useMotionValue } from "framer-motion";
+import { useRouter } from "next/navigation";
 import { ArrowRight, Play, Shirt, Headphones, Sofa, ArrowUpRight, Star, ShoppingBag } from "lucide-react";
 import { PulseDot, PulseRing } from "@/components/ui/pulse-dot";
 import type { StorefrontProduct } from "@/lib/catalog";
@@ -95,6 +96,7 @@ function TiltCard({ children, className }: { children: React.ReactNode; classNam
 }
 
 function HeroWorld() {
+  const router = useRouter();
   const { normalized } = useMouse();
   const spring = { stiffness: 60, damping: 20 };
   const moveX = useSpring(normalized.x * 20, spring);
@@ -153,11 +155,11 @@ function HeroWorld() {
           transition={{ delay: 1.1, duration: 0.7 }}
           className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row"
         >
-          <Button size="lg" className="group rounded-full px-8" data-cursor="add">
+          <Button size="lg" className="group rounded-full px-8" data-cursor="add" onClick={() => router.push("/shop/fashion")}>
             Explore Collection
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
           </Button>
-          <Button size="lg" variant="white" className="group rounded-full px-8" data-cursor="play">
+          <Button size="lg" variant="white" className="group rounded-full px-8" data-cursor="play" onClick={() => document.getElementById("new-drop")?.scrollIntoView({ behavior: "smooth" })}>
             <Play className="h-4 w-4 fill-foreground" />
             Watch Showreel
           </Button>
@@ -237,6 +239,7 @@ function EnterTheWorld() {
 }
 
 function NewDrop({ product }: { product: StorefrontProduct }) {
+  const { addItem, openCart } = useCart();
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const scale = useTransform(scrollYProgress, [0, 1], [0.9, 1.05]);
@@ -244,7 +247,7 @@ function NewDrop({ product }: { product: StorefrontProduct }) {
   const newDropSlides: CarouselSlide[] = (product.images.length ? product.images : [product.image]).map((src) => ({ type: "image", src, alt: product.name }));
 
   return (
-    <section ref={ref} className="relative overflow-hidden px-6 py-32 lg:px-12">
+    <section id="new-drop" ref={ref} className="relative overflow-hidden px-6 py-32 lg:px-12">
       <div className="mx-auto max-w-7xl">
         <div className="grid items-center gap-12 lg:grid-cols-2">
           <TiltCard className="relative aspect-[3/4] overflow-hidden rounded-[2.5rem] bg-muted card-glow">
@@ -278,7 +281,22 @@ function NewDrop({ product }: { product: StorefrontProduct }) {
               {product.compareAtPrice && <span className="text-lg text-muted-foreground line-through">{inr(product.compareAtPrice)}</span>}
             </div>
             <div className="mt-8 flex gap-3">
-              <Button size="lg" className="rounded-full px-8" data-cursor="add">Add to Bag</Button>
+              <Button size="lg" className="rounded-full px-8" data-cursor="add" onClick={() => {
+              const variant = product.variants[0];
+              if (!variant) return;
+              addItem({
+                productId: product.id,
+                variantId: variant.id,
+                name: product.name,
+                slug: product.slug,
+                image: product.image,
+                size: variant.size,
+                color: variant.color,
+                price: variant.price,
+                quantity: 1,
+              });
+              openCart();
+            }}>Add to Bag</Button>
               <Link href={`/product/${product.slug}`}>
                 <Button size="lg" variant="white" className="rounded-full px-8" data-cursor="view">View details</Button>
               </Link>
@@ -579,6 +597,7 @@ function CompleteTheLook({ products }: { products: StorefrontProduct[] }) {
 }
 
 function TechShowroom({ product }: { product: StorefrontProduct }) {
+  const router = useRouter();
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const y = useTransform(scrollYProgress, [0, 1], [80, -80]);
@@ -615,7 +634,7 @@ function TechShowroom({ product }: { product: StorefrontProduct }) {
                 </motion.div>
               ))}
             </div>
-            <Button size="lg" className="mt-8 rounded-full px-8" data-cursor="view">View product</Button>
+            <Button size="lg" className="mt-8 rounded-full px-8" data-cursor="view" onClick={() => router.push(`/product/${product.slug}`)}>View product</Button>
           </motion.div>
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -675,6 +694,7 @@ function LifestyleSpace({ products }: { products: StorefrontProduct[] }) {
 }
 
 function LimitedDrop({ product }: { product: StorefrontProduct }) {
+  const { addItem, openCart } = useCart();
   const stock = 12;
   return (
     <section className="bg-ink px-6 py-32 text-background lg:px-12">
@@ -702,7 +722,22 @@ function LimitedDrop({ product }: { product: StorefrontProduct }) {
 
             <div className="mt-8 flex items-center gap-4">
               <span className="font-display text-3xl font-semibold">{inr(product.price)}</span>
-              <Button className="rounded-full bg-gold px-8 text-ink hover:bg-gold-soft hover:shadow-[0_0_40px_rgba(201,162,76,0.35)]">Secure now</Button>
+              <Button className="rounded-full bg-gold px-8 text-ink hover:bg-gold-soft hover:shadow-[0_0_40px_rgba(201,162,76,0.35)]" onClick={() => {
+                const variant = product.variants[0];
+                if (!variant) return;
+                addItem({
+                  productId: product.id,
+                  variantId: variant.id,
+                  name: product.name,
+                  slug: product.slug,
+                  image: product.image,
+                  size: variant.size,
+                  color: variant.color,
+                  price: variant.price,
+                  quantity: 1,
+                });
+                openCart();
+              }}>Secure now</Button>
             </div>
           </motion.div>
 
@@ -752,6 +787,7 @@ function CommunityGrid() {
 }
 
 function MembershipClub() {
+  const router = useRouter();
   const benefits = ["Early access", "Private drops", "Member products", "Exclusive rewards"];
   return (
     <section className="overflow-hidden px-6 py-32 lg:px-12">
@@ -785,7 +821,7 @@ function MembershipClub() {
               </motion.div>
             ))}
           </div>
-          <Button size="lg" className="mt-10 rounded-full px-8" data-cursor="add">Become a member</Button>
+          <Button size="lg" className="mt-10 rounded-full px-8" data-cursor="add" onClick={() => router.push("/account")}>Become a member</Button>
         </motion.div>
       </div>
     </section>
@@ -831,6 +867,7 @@ function BrandStory() {
 }
 
 function FinalCTA() {
+  const router = useRouter();
   return (
     <section className="relative flex min-h-[80vh] flex-col items-center justify-center overflow-hidden px-6 py-24 text-center lg:px-12">
       <div className="pointer-events-none absolute inset-0 -z-10">
@@ -854,7 +891,7 @@ function FinalCTA() {
         transition={{ delay: 0.3 }}
         className="mt-10"
       >
-        <Button size="lg" className="rounded-full px-10 py-6 text-lg" data-cursor="add">
+        <Button size="lg" className="rounded-full px-10 py-6 text-lg" data-cursor="add" onClick={() => router.push("/new")}>
           Start exploring
           <ArrowRight className="h-5 w-5" />
         </Button>

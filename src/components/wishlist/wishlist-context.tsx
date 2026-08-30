@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useSyncExternalStore, type ReactNode } from "react";
 
 export type WishlistItem = {
   productId: string;
@@ -21,39 +21,81 @@ type WishlistContextValue = {
 
 const WishlistContext = createContext<WishlistContextValue | undefined>(undefined);
 
-function loadWishlist(): WishlistItem[] {
-  if (typeof window === "undefined") return [];
+const STORAGE_KEY = "rikwishlist";
+const CHANGE_EVENT = "rikamchot-wishlist-change";
+
+let cache: WishlistItem[] = [];
+
+function readStorage(): { items: WishlistItem[]; key: string | null } {
+  if (typeof window === "undefined") return { items: [], key: null };
   try {
-    const raw = localStorage.getItem("rikwishlist");
-    return raw ? (JSON.parse(raw) as WishlistItem[]) : [];
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return { items: JSON.parse(raw) as WishlistItem[], key: raw };
+    return { items: [], key: null };
   } catch {
-    return [];
+    return { items: [], key: null };
+  }
+}
+
+function refreshCache() {
+  cache = readStorage().items;
+}
+
+function getSnapshot() {
+  return cache;
+}
+
+function getServerSnapshot() {
+  return [];
+}
+
+function subscribe(callback: () => void) {
+  if (typeof window === "undefined") return () => {};
+  const wrapped = () => {
+    refreshCache();
+    callback();
+  };
+  window.addEventListener("storage", wrapped);
+  window.addEventListener(CHANGE_EVENT, wrapped);
+  return () => {
+    window.removeEventListener("storage", wrapped);
+    window.removeEventListener(CHANGE_EVENT, wrapped);
+  };
+}
+
+function persist(items: WishlistItem[]) {
+  if (typeof window !== "undefined") {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+      refreshCache();
+      window.dispatchEvent(new Event(CHANGE_EVENT));
+    } catch {}
   }
 }
 
 export function WishlistProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<WishlistItem[]>(loadWishlist);
+  const items = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   useEffect(() => {
-    try {
-      localStorage.setItem("rikwishlist", JSON.stringify(items));
-    } catch {}
-  }, [items]);
+    refreshCache();
+    window.dispatchEvent(new Event(CHANGE_EVENT));
+  }, []);
 
   const add = useCallback((item: WishlistItem) => {
-    setItems((prev) => (prev.some((i) => i.productId === item.productId) ? prev : [...prev, item]));
-  }, []);
+    const next = items.some((i) => i.productId === item.productId) ? items : [...items, item];
+    persist(next);
+  }, [items]);
 
   const remove = useCallback((productId: string) => {
-    setItems((prev) => prev.filter((i) => i.productId !== productId));
-  }, []);
+    const next = items.filter((i) => i.productId !== productId);
+    persist(next);
+  }, [items]);
 
   const toggle = useCallback((item: WishlistItem) => {
-    setItems((prev) => {
-      const exists = prev.some((i) => i.productId === item.productId);
-      return exists ? prev.filter((i) => i.productId !== item.productId) : [...prev, item];
-    });
-  }, []);
+    const exists = items.some((i) => i.productId === item.productId);
+    const next = exists ? items.filter((i) => i.productId !== item.productId) : [...items, item];
+    persist(next);
+  }, [items]);
 
   const isInWishlist = useCallback((productId: string) => items.some((i) => i.productId === productId), [items]);
 

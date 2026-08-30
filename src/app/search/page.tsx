@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { searchProducts } from "@/lib/catalog";
 import { ProductGrid } from "@/components/product/product-grid";
+import { SearchInput } from "@/components/search/search-input";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
 import { Marquee } from "@/components/ui/marquee";
 
@@ -15,13 +16,16 @@ export default async function SearchPage({ searchParams }: { searchParams: Searc
     <main className="min-h-screen px-6 pb-24 pt-28 lg:px-10">
       <div className="mx-auto max-w-7xl">
         <ScrollReveal variant="fade-up">
-          <div className="mb-12 space-y-3">
-            <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
-              Search results
-            </p>
-            <h1 className="font-display text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
-              {query ? `“${query}”` : "Search"}
-            </h1>
+          <div className="mb-12 space-y-6">
+            <div className="space-y-3">
+              <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
+                Search results
+              </p>
+              <h1 className="font-display text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
+                {query ? `“${query}”` : "Search"}
+              </h1>
+            </div>
+            <SearchInput className="max-w-xl" />
             {products.length > 0 ? (
               <p className="max-w-2xl text-muted-foreground">{products.length} products found</p>
             ) : (

@@ -4,13 +4,14 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, Mail, Lock } from "lucide-react";
+import { ArrowRight, Mail, Lock, User } from "lucide-react";
 import { useAuth } from "@/components/auth/auth-context";
 import { Button } from "@/components/ui/button";
 
-export default function LoginPage() {
+export default function SignupPage() {
   const router = useRouter();
   const { login, user } = useAuth();
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -21,10 +22,10 @@ export default function LoginPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
+    if (!email || !password) return;
     setIsSubmitting(true);
     setTimeout(() => {
-      login(email);
+      login(email, name || undefined);
       router.replace("/account");
     }, 600);
   };
@@ -43,11 +44,28 @@ export default function LoginPage() {
         className="w-full max-w-md rounded-3xl border border-border bg-card/80 p-8 shadow-2xl backdrop-blur-xl sm:p-10"
       >
         <div className="text-center">
-          <h1 className="font-display text-3xl font-semibold tracking-tight text-foreground">Welcome back</h1>
-          <p className="mt-2 text-muted-foreground">Enter your details to access your account.</p>
+          <h1 className="font-display text-3xl font-semibold tracking-tight text-foreground">Create account</h1>
+          <p className="mt-2 text-muted-foreground">Join RIKAMCHOT to start curating your world.</p>
         </div>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+          <div className="space-y-2">
+            <label htmlFor="name" className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+              Name
+            </label>
+            <div className="relative">
+              <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <input
+                id="name"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Your name"
+                className="h-12 w-full rounded-2xl border border-border bg-background pl-10 pr-4 text-sm text-foreground outline-none transition-all focus:border-gold focus:ring-2 focus:ring-gold/20"
+              />
+            </div>
+          </div>
+
           <div className="space-y-2">
             <label htmlFor="email" className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
               Email
@@ -90,15 +108,15 @@ export default function LoginPage() {
             className="group w-full rounded-2xl"
             disabled={isSubmitting}
           >
-            {isSubmitting ? "Signing in..." : "Sign in"}
+            {isSubmitting ? "Creating account..." : "Create account"}
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
           </Button>
         </form>
 
         <p className="mt-6 text-center text-sm text-muted-foreground">
-          Don&apos;t have an account?{" "}
-          <Link href="/signup" className="font-medium text-gold-dark hover:underline">
-            Create account
+          Already have an account?{" "}
+          <Link href="/login" className="font-medium text-gold-dark hover:underline">
+            Sign in
           </Link>
         </p>
       </motion.div>

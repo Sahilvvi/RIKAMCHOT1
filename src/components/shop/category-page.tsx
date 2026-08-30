@@ -124,7 +124,7 @@ function TrendingRail({ products }: { products: StorefrontProduct[] }) {
                 transition={{ delay: i * 0.08 }}
                 className="w-[72vw] flex-shrink-0 sm:w-[45vw] lg:w-[28vw]"
               >
-                <ProductCard product={product} />
+                <ProductCard product={product} index={i} />
               </motion.div>
             ))}
           </motion.div>

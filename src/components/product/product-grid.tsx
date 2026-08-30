@@ -14,18 +14,25 @@ export function ProductGrid({ products }: { products: StorefrontProduct[] }) {
   }
 
   return (
-    <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
-      {products.map((product, i) => (
-        <motion.div
-          key={product.id}
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-50px" }}
-          transition={{ duration: 0.5, delay: (i % 4) * 0.05, ease: [0.25, 0.1, 0.25, 1] }}
-        >
-          <ProductCard product={product} />
-        </motion.div>
-      ))}
+    <div className="[perspective:1200px]">
+      <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4" style={{ transformStyle: "preserve-3d" }}>
+        {products.map((product, i) => (
+          <motion.div
+            key={product.id}
+            initial={{ opacity: 0, y: 50, scale: 0.94, rotateX: 8 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1, rotateX: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{
+              duration: 0.6,
+              delay: Math.min(i * 0.06, 0.6),
+              ease: [0.22, 1, 0.36, 1],
+            }}
+            style={{ transformStyle: "preserve-3d" }}
+          >
+            <ProductCard product={product} index={i} />
+          </motion.div>
+        ))}
+      </div>
     </div>
   );
 }

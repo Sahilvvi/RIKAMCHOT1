@@ -124,14 +124,6 @@ function HeroWorld() {
         style={{ x: moveX, y: moveY }}
         className="relative z-20 max-w-6xl"
       >
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.7 }}
-        >
-          <Badge className="mb-8 border-gold/30 bg-background/60 text-gold-dark backdrop-blur-sm">Premium multi-vendor marketplace</Badge>
-        </motion.div>
-
         <h1 className="font-display text-6xl font-semibold leading-[0.95] tracking-tight text-foreground sm:text-8xl lg:text-9xl">
           {titleWords.map((w, i) => (
             <motion.span

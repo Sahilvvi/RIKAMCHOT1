@@ -22,14 +22,14 @@ export type RawSeedProduct = {
   popularity: number;
 };
 
-const fashionImgs = [
-  "/products/fashion-1.jpg",
-  "/products/fashion-2.jpg",
-  "/products/fashion-3.jpg",
-  "/products/fashion-4.jpg",
-  "/products/fashion-5.jpg",
-  "/products/fashion-6.jpg",
-];
+const fashionImgs = {
+  tee: "/products/fashion-1.jpg",
+  hoodie: "/products/fashion-2.jpg",
+  bottoms: "/products/fashion-3.jpg",
+  cap: "/products/fashion-4.jpg",
+  sneaker: "/products/fashion-5.jpg",
+  bag: "/products/fashion-6.jpg",
+};
 
 const techImgs = [
   "/products/tech-1.jpg",
@@ -50,7 +50,44 @@ const lifestyleImgs = [
 function imagePool(root: string) {
   if (root === "tech") return techImgs;
   if (root === "lifestyle") return lifestyleImgs;
-  return fashionImgs;
+  return Object.values(fashionImgs);
+}
+
+function pickFashionImage(p: typeof rawSeed[number]) {
+  const name = p.name.toLowerCase();
+  if (name.includes("hoodie") || name.includes("crewneck") || name.includes("sweatshirt")) return fashionImgs.hoodie;
+  if (name.includes("tee") || name.includes("polo") || name.includes("shirt")) return fashionImgs.tee;
+  if (name.includes("pant") || name.includes("jogger") || name.includes("trouser") || name.includes("cargo")) return fashionImgs.bottoms;
+  if (name.includes("sneaker") || name.includes("shoe")) return fashionImgs.sneaker;
+  if (name.includes("bag")) return fashionImgs.bag;
+  if (name.includes("cap") || name.includes("hat")) return fashionImgs.cap;
+  return fashionImgs.tee;
+}
+
+function pickImage(p: typeof rawSeed[number]) {
+  if (p.rootCategory === "tech") return pickTechImage(p);
+  if (p.rootCategory === "lifestyle") return pickLifestyleImage(p);
+  return pickFashionImage(p);
+}
+
+function pickTechImage(p: typeof rawSeed[number]) {
+  const name = p.name.toLowerCase();
+  if (name.includes("headphone")) return techImgs[0];
+  if (name.includes("watch") || name.includes("wearable")) return techImgs[1];
+  if (name.includes("speaker")) return techImgs[2];
+  if (name.includes("mouse")) return techImgs[3];
+  if (name.includes("keyboard")) return techImgs[4];
+  return techImgs[0];
+}
+
+function pickLifestyleImage(p: typeof rawSeed[number]) {
+  const name = p.name.toLowerCase();
+  if (name.includes("stand")) return lifestyleImgs[0];
+  if (name.includes("lamp")) return lifestyleImgs[1];
+  if (name.includes("kit")) return lifestyleImgs[2];
+  if (name.includes("diffuser")) return lifestyleImgs[3];
+  if (name.includes("sleeve")) return lifestyleImgs[4];
+  return lifestyleImgs[0];
 }
 
 function slugify(name: string) {
@@ -133,8 +170,9 @@ export const SEED_PRODUCTS: StorefrontProduct[] = rawSeed.map((p, i) => {
   const pool = imagePool(p.rootCategory);
   const count = categoryCounters[p.rootCategory] || 0;
   categoryCounters[p.rootCategory] = count + 1;
-  const image = pool[count % pool.length];
-  const nextImage = pool[(count + 1) % pool.length];
+  const image = pickImage(p);
+  const filteredPool = pool.filter((img) => img !== image);
+  const nextImage = filteredPool[count % filteredPool.length] || image;
   const slug = slugify(p.name);
   const raw = { ...p, id, image } as RawSeedProduct;
   const badges: string[] = [];

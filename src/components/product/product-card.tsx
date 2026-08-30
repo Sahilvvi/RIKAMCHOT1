@@ -61,9 +61,9 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
 
   return (
     <motion.div
-      whileHover={{ y: -8 }}
+      whileHover={{ y: -10, scale: 1.01 }}
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
-      className="group"
+      className="group rounded-3xl p-2 transition-shadow duration-500 hover:shadow-[0_24px_70px_-12px_rgba(0,0,0,0.12)]"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >

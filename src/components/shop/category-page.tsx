@@ -13,19 +13,19 @@ import { cn } from "@/lib/utils";
 import { ProductGrid } from "@/components/product/product-grid";
 
 const categoryIcon: Record<string, React.ReactNode> = {
-  fashion: <Shirt className="h-6 w-6" />,
-  tech: <Headphones className="h-6 w-6" />,
-  lifestyle: <Sofa className="h-6 w-6" />,
-  audio: <Headphones className="h-6 w-6" />,
-  wearables: <Watch className="h-6 w-6" />,
-  smartphones: <Smartphone className="h-6 w-6" />,
-  gaming: <Gamepad2 className="h-6 w-6" />,
-  "computer-accessories": <Briefcase className="h-6 w-6" />,
-  home: <Home className="h-6 w-6" />,
-  lighting: <Lamp className="h-6 w-6" />,
-  desk: <Briefcase className="h-6 w-6" />,
-  travel: <Briefcase className="h-6 w-6" />,
-  kitchen: <Sparkles className="h-6 w-6" />,
+  fashion: <Shirt className="h-5 w-5" />,
+  tech: <Headphones className="h-5 w-5" />,
+  lifestyle: <Sofa className="h-5 w-5" />,
+  audio: <Headphones className="h-5 w-5" />,
+  wearables: <Watch className="h-5 w-5" />,
+  smartphones: <Smartphone className="h-5 w-5" />,
+  gaming: <Gamepad2 className="h-5 w-5" />,
+  "computer-accessories": <Briefcase className="h-5 w-5" />,
+  home: <Home className="h-5 w-5" />,
+  lighting: <Lamp className="h-5 w-5" />,
+  desk: <Briefcase className="h-5 w-5" />,
+  travel: <Briefcase className="h-5 w-5" />,
+  kitchen: <Sparkles className="h-5 w-5" />,
 };
 
 function SectionHeading({ eyebrow, title, align = "left" }: { eyebrow?: string; title: string; align?: "left" | "center" }) {
@@ -41,24 +41,35 @@ function CategoryHero({ category, featured }: { category: StorefrontCategory; fe
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "25%"]);
+  const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
   return (
-    <section ref={ref} className="relative h-[70vh] overflow-hidden">
+    <section ref={ref} className="relative h-[75vh] overflow-hidden">
       <motion.div style={{ y }} className="absolute inset-0">
         <Image src={featured.image} alt={category.name} fill priority className="object-cover" unoptimized={featured.image.startsWith("/")} />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+        <div className="pointer-events-none absolute inset-0 grain opacity-30" />
       </motion.div>
-      <div className="relative flex h-full flex-col justify-end px-6 pb-16 lg:px-10">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          className="mx-auto max-w-7xl"
-        >
-          <p className="text-xs font-semibold uppercase tracking-widest text-gold">{category.description || "Explore the world"}</p>
-          <h1 className="mt-4 font-display text-5xl font-semibold tracking-tight text-foreground sm:text-7xl lg:text-8xl">{category.name}</h1>
-        </motion.div>
-      </div>
+      <motion.div style={{ opacity }} className="relative flex h-full flex-col justify-end px-6 pb-20 lg:px-10">
+        <div className="mx-auto max-w-7xl">
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="text-xs font-semibold uppercase tracking-widest text-gold"
+          >
+            {category.description || "Explore the world"}
+          </motion.p>
+          <motion.h1
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className="mt-4 font-display text-5xl font-semibold tracking-tight text-foreground sm:text-7xl lg:text-8xl"
+          >
+            {category.name}
+          </motion.h1>
+        </div>
+      </motion.div>
     </section>
   );
 }
@@ -76,15 +87,16 @@ function SubcategoryGrid({ categories, current }: { categories: StorefrontCatego
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: i * 0.05 }}
+              whileHover={{ y: -3 }}
             >
               <Link
                 href={`/shop/${cat.slug}`}
-                className={`group flex items-center gap-3 rounded-2xl border border-border px-5 py-3 transition-colors hover:border-gold/40 hover:bg-gold/5 ${
+                className={`group flex items-center gap-3 rounded-2xl border border-border px-5 py-3 transition-all hover:border-gold/40 hover:bg-gold/5 hover:shadow-lg ${
                   cat.slug === current ? "bg-gold/10 border-gold/30" : "bg-background"
                 }`}
                 data-cursor="open"
               >
-                <span className="text-muted-foreground transition-colors group-hover:text-gold">{categoryIcon[cat.slug] || <Sparkles className="h-6 w-6" />}</span>
+                <span className="text-muted-foreground transition-colors group-hover:text-gold">{categoryIcon[cat.slug] || <Sparkles className="h-5 w-5" />}</span>
                 <span className="text-sm font-medium text-foreground">{cat.name}</span>
               </Link>
             </motion.div>
@@ -102,11 +114,18 @@ function TrendingRail({ products }: { products: StorefrontProduct[] }) {
       <div className="mx-auto max-w-7xl">
         <SectionHeading eyebrow="Trending now" title="Most wanted" />
         <motion.div ref={ref} whileTap={{ cursor: "grabbing" }} className="overflow-hidden">
-          <motion.div drag="x" dragConstraints={ref} className="flex gap-4 pb-4">
-            {products.slice(0, 6).map((product) => (
-              <div key={product.id} className="w-[72vw] flex-shrink-0 sm:w-[45vw] lg:w-[28vw]">
+          <motion.div drag="x" dragConstraints={ref} className="flex gap-5 pb-4" data-cursor="drag">
+            {products.slice(0, 6).map((product, i) => (
+              <motion.div
+                key={product.id}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.08 }}
+                className="w-[72vw] flex-shrink-0 sm:w-[45vw] lg:w-[28vw]"
+              >
                 <ProductCard product={product} />
-              </div>
+              </motion.div>
             ))}
           </motion.div>
         </motion.div>
@@ -125,7 +144,13 @@ function EditorialBlock({ product }: { product: StorefrontProduct }) {
         <motion.div style={{ y }} className="relative aspect-[4/3] lg:aspect-auto lg:h-full">
           <Image src={product.image} alt={product.name} fill className="object-cover" unoptimized={product.image.startsWith("/")} />
         </motion.div>
-        <div className="flex flex-col justify-center p-8 lg:p-14">
+        <motion.div
+          initial={{ opacity: 0, x: 40 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="flex flex-col justify-center p-8 lg:p-14"
+        >
           <p className="text-xs font-semibold uppercase tracking-widest text-gold">{product.collection}</p>
           <h3 className="mt-4 font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">{product.name}</h3>
           <p className="mt-4 text-muted-foreground">{product.description}</p>
@@ -137,12 +162,12 @@ function EditorialBlock({ product }: { product: StorefrontProduct }) {
           </div>
           <Link
             href={`/product/${product.slug}`}
-            className={cn(buttonVariants({ variant: "default" }), "mt-8 w-fit")}
-            data-cursor="open"
+            className={cn(buttonVariants({ variant: "default" }), "mt-8 w-fit rounded-full")}
+            data-cursor="view"
           >
             View product <ArrowRight className="h-4 w-4" />
           </Link>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
@@ -150,25 +175,28 @@ function EditorialBlock({ product }: { product: StorefrontProduct }) {
 
 function StatsBar({ count, collections }: { count: number; collections: string[] }) {
   const uniqueCollections = Array.from(new Set(collections)).slice(0, 3);
+  const stats = [
+    { label: "Products", value: count },
+    { label: "Collections", value: uniqueCollections.length },
+    { label: "Curated sellers", value: 12 },
+    { label: "Delivery", value: "2–5 days" },
+  ];
   return (
-    <section className="border-y border-border/50 px-6 py-8 lg:px-10">
-      <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-6">
-        <div className="space-y-1">
-          <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Products</p>
-          <p className="font-display text-3xl font-semibold text-foreground">{count}</p>
-        </div>
-        <div className="space-y-1">
-          <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Collections</p>
-          <p className="font-display text-3xl font-semibold text-foreground">{uniqueCollections.length}</p>
-        </div>
-        <div className="space-y-1">
-          <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Curated sellers</p>
-          <p className="font-display text-3xl font-semibold text-foreground">12</p>
-        </div>
-        <div className="space-y-1">
-          <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Delivery</p>
-          <p className="font-display text-3xl font-semibold text-foreground">2–5 days</p>
-        </div>
+    <section className="border-y border-border/50 px-6 py-10 lg:px-10">
+      <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-8">
+        {stats.map((s, i) => (
+          <motion.div
+            key={s.label}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: i * 0.1 }}
+            className="space-y-1"
+          >
+            <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">{s.label}</p>
+            <p className="font-display text-3xl font-semibold text-foreground">{s.value}</p>
+          </motion.div>
+        ))}
       </div>
     </section>
   );
@@ -191,10 +219,10 @@ function ValueCTA({ category }: { category: StorefrontCategory }) {
             Curated pieces, verified sellers, and a commerce experience designed around the product — not the cart.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Link href="/search" className={cn(buttonVariants({ variant: "white", size: "lg" }))} data-cursor="open">
+            <Link href="/search" className={cn(buttonVariants({ variant: "white", size: "lg" }), "rounded-full")} data-cursor="open">
               Search all products
             </Link>
-            <Link href="/" className={cn(buttonVariants({ variant: "outline", size: "lg" }))} data-cursor="open">
+            <Link href="/" className={cn(buttonVariants({ variant: "outline", size: "lg" }), "rounded-full")} data-cursor="open">
               Back to worlds
             </Link>
           </div>

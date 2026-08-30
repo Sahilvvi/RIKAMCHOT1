@@ -11,6 +11,7 @@ import { PageTransition } from "@/components/layout/page-transition";
 import { CustomCursor } from "@/components/layout/custom-cursor";
 import { ScrollProgress } from "@/components/layout/scroll-progress";
 import { AmbientMotion } from "@/components/layout/ambient-motion";
+import { AuthProvider } from "@/components/auth/auth-context";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -54,18 +55,20 @@ export default function RootLayout({
       className={`${inter.variable} ${spaceGrotesk.variable} ${instrumentSerif.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background pb-16 text-foreground md:pb-0">
-        <CartProvider>
-          <WishlistProvider>
-            <Header />
-            <ScrollProgress />
-            <AmbientMotion />
-            <PageTransition>{children}</PageTransition>
-            <CustomCursor />
-            <CartDrawer />
-            <Footer />
-            <MobileNav />
-          </WishlistProvider>
-        </CartProvider>
+        <AuthProvider>
+          <CartProvider>
+            <WishlistProvider>
+              <Header />
+              <ScrollProgress />
+              <AmbientMotion />
+              <PageTransition>{children}</PageTransition>
+              <CustomCursor />
+              <CartDrawer />
+              <Footer />
+              <MobileNav />
+            </WishlistProvider>
+          </CartProvider>
+        </AuthProvider>
       </body>
     </html>
   );

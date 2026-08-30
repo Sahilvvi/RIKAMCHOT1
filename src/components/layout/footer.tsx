@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { Marquee } from "@/components/ui/marquee";
 
 const discover = [
   { label: "Shop Fashion", href: "/shop/fashion" },
@@ -19,8 +20,17 @@ const seller = [
 
 export function Footer() {
   return (
-    <footer className="border-t border-border bg-background px-6 py-16 lg:px-12">
-      <div className="mx-auto max-w-7xl">
+    <footer className="border-t border-border bg-background">
+      <Marquee className="border-b border-border bg-card py-2.5 text-xs font-semibold uppercase tracking-widest text-muted-foreground" speed={25}>
+        {["Shop Fashion", "Shop Tech", "Shop Lifestyle", "New Arrivals", "Sale", "3D Lab", "Become a Seller", "Sovereign Collection", "Join the Circle"].map((label) => (
+          <span key={label} className="inline-flex items-center gap-3">
+            <span className="h-1 w-1 rounded-full bg-gold" />
+            {label}
+          </span>
+        ))}
+      </Marquee>
+      <div className="px-6 py-16 lg:px-12">
+        <div className="mx-auto max-w-7xl">
         <div className="grid gap-12 md:grid-cols-4">
           <div className="md:col-span-2">
             <Link href="/" className="font-display text-2xl font-semibold tracking-tight text-foreground">
@@ -63,6 +73,7 @@ export function Footer() {
             <Link href="/terms" className="hover:text-foreground transition-colors">Terms</Link>
           </div>
         </div>
+      </div>
       </div>
     </footer>
   );

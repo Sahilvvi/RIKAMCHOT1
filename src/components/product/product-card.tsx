@@ -180,6 +180,7 @@ export function ProductCard({ product, index }: { product: StorefrontProduct; in
                 animate={{ y: [0, -4, 0], rotate: [0, 0.5, 0] }}
                 transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
                 className="relative h-full w-full"
+                style={{ filter: "drop-shadow(0 20px 30px rgba(0,0,0,0.16))" }}
               >
                 <AnimatePresence mode="wait">
                   {sequence.map(
@@ -265,12 +266,12 @@ export function ProductCard({ product, index }: { product: StorefrontProduct; in
           </div>
 
           <div className="flex flex-1 flex-col justify-end p-5">
-            <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-              {product.collection}
-            </p>
-            <h3 className="mt-1 font-display text-base font-medium text-foreground transition-transform duration-300 group-hover:translate-x-1">
+            <h3 className="font-display text-base font-medium text-foreground transition-transform duration-300 group-hover:translate-x-1">
               {product.name}
             </h3>
+            <p className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground">
+              {product.collection}
+            </p>
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground opacity-0 transition-opacity duration-300 group-hover:opacity-100">
               <span className="text-gold">★</span>
               <span>{product.rating}</span>

@@ -2,12 +2,14 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { X, ShoppingBag, Heart } from "lucide-react";
 import { useWishlist } from "@/components/wishlist/wishlist-context";
 import { useCart } from "@/components/cart/cart-context";
 import { inr } from "@/lib/catalog";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { Marquee } from "@/components/ui/marquee";
 
 export default function WishlistPage() {
   const { items, remove } = useWishlist();
@@ -16,9 +18,26 @@ export default function WishlistPage() {
   return (
     <main className="min-h-screen px-6 pb-24 pt-28 lg:px-10">
       <div className="mx-auto max-w-7xl">
-        <h1 className="font-display text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
-          Your Wishlist
-        </h1>
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <h1 className="font-display text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
+            Your Wishlist
+          </h1>
+        </motion.div>
+
+        <div className="my-8 border-y border-border/50 bg-card/40 py-2.5">
+          <Marquee speed={26} direction="right" className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">
+            {["Saved for Later", "Curated by You", "Fashion", "Tech", "Lifestyle", "Wishlist", "RIKAMCHOT"].map((w) => (
+              <span key={w} className="inline-flex items-center gap-3">
+                <span className="h-1.5 w-1.5 rounded-full bg-pink" />
+                {w}
+              </span>
+            ))}
+          </Marquee>
+        </div>
 
         {items.length === 0 ? (
           <div className="mt-16 flex flex-col items-center justify-center text-center">

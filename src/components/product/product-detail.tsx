@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Minus,
   Plus,
@@ -27,6 +27,9 @@ import { useWishlist } from "@/components/wishlist/wishlist-context";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ProductGrid } from "./product-grid";
+import { Carousel } from "@/components/ui/carousel";
+import type { CarouselSlide } from "@/components/ui/carousel";
+import { Marquee } from "@/components/ui/marquee";
 
 const TAB_LABELS = ["Story", "Specs", "Reviews", "Delivery & Returns"];
 
@@ -75,7 +78,6 @@ export function ProductDetail({
   const [selectedSize, setSelectedSize] = useState(product.sizes[0] || "");
   const [selectedColor, setSelectedColor] = useState(product.colors[0]?.name || "");
   const [quantity, setQuantity] = useState(1);
-  const [activeImage, setActiveImage] = useState(0);
   const [adding, setAdding] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
 
@@ -111,14 +113,12 @@ export function ProductDetail({
       : 0;
 
   const inWishlist = isInWishlist(product.id);
-  const visibleImages = product.images.length > 1 ? product.images : [product.image, product.image];
-  const heroRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
-  const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "12%"]);
+  const mediaSlides: CarouselSlide[] = (product.images.length ? product.images : [product.image]).map((src) => ({ type: "image", src, alt: product.name }));
+  mediaSlides.push({ type: "video", src: "/videos/hero-loop.mp4", alt: "Product film" });
 
   return (
     <>
-      <section ref={heroRef} className="min-h-screen px-6 pb-16 pt-24 lg:px-10 lg:pt-32">
+      <section className="min-h-screen px-6 pb-16 pt-24 lg:px-10 lg:pt-32">
         <div className="mx-auto max-w-7xl">
           <Link
             href={`/shop/${product.rootCategory}`}
@@ -137,59 +137,15 @@ export function ProductDetail({
               className="space-y-4"
             >
               <div className="relative aspect-[4/5] overflow-hidden rounded-3xl bg-muted lg:aspect-square" data-cursor="explore">
-                <motion.div style={{ y: imageY }} className="absolute inset-0">
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={activeImage}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.3 }}
-                      className="absolute inset-0"
-                    >
-                      <Image
-                        src={visibleImages[activeImage]}
-                        alt={product.name}
-                        fill
-                        priority
-                        sizes="(max-width: 1024px) 100vw, 50vw"
-                        className="object-cover"
-                        unoptimized={visibleImages[activeImage].startsWith("/")}
-                      />
-                    </motion.div>
-                  </AnimatePresence>
-                </motion.div>
+                <Carousel slides={mediaSlides} autoPlay interval={5000} aspect="" className="absolute inset-0 h-full w-full rounded-3xl" />
 
-                <div className="absolute left-4 top-4 flex gap-2">
+                <div className="absolute left-4 top-4 z-10 flex gap-2">
                   {product.badges.map((b) => (
                     <Badge key={b} variant={b === "new" ? "default" : b === "bestseller" ? "success" : "destructive"}>
                       {b}
                     </Badge>
                   ))}
                 </div>
-              </div>
-
-              <div className="flex gap-3 overflow-x-auto pb-2">
-                {visibleImages.map((img, i) => (
-                  <button
-                    key={i}
-                    type="button"
-                    onClick={() => setActiveImage(i)}
-                    className={`relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl border-2 transition-colors ${
-                      activeImage === i ? "border-gold" : "border-transparent"
-                    }`}
-                    data-cursor="image"
-                  >
-                    <Image
-                      src={img}
-                      alt={`${product.name} ${i + 1}`}
-                      fill
-                      sizes="80px"
-                      className="object-cover"
-                      unoptimized={img.startsWith("/")}
-                    />
-                  </button>
-                ))}
               </div>
 
               <div className="flex items-center gap-3 rounded-2xl border border-border/60 bg-card p-4">
@@ -362,6 +318,17 @@ export function ProductDetail({
           </div>
         </div>
       </section>
+
+      <div className="border-y border-border/50 bg-card/40 py-2.5">
+        <Marquee speed={28} className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">
+          {[product.collection, product.material, product.categoryName, product.rootCategory, "Verified Seller", "Free Shipping", "7 Day Returns"].map((w) => (
+            <span key={w} className="inline-flex items-center gap-3">
+              <span className="h-1.5 w-1.5 rounded-full bg-gold" />
+              {w}
+            </span>
+          ))}
+        </Marquee>
+      </div>
 
       {/* Showroom tabs */}
       <section className="border-t border-border/50 bg-card px-6 py-16 lg:px-10">

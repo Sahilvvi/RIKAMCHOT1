@@ -13,6 +13,9 @@ import { Button } from "@/components/ui/button";
 import { Product3DViewer } from "@/components/product/product-3d-viewer";
 import { useCart } from "@/components/cart/cart-context";
 import { ProductCard } from "@/components/product/product-card";
+import { Marquee } from "@/components/ui/marquee";
+import { Carousel } from "@/components/ui/carousel";
+import type { CarouselSlide } from "@/components/ui/carousel";
 
 function Badge({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
@@ -24,11 +27,33 @@ function Badge({ children, className }: { children: React.ReactNode; className?:
 
 function SectionHeading({ eyebrow, title, align = "left" }: { eyebrow?: string; title: string; align?: "left" | "center" }) {
   return (
-    <div className={`mb-12 ${align === "center" ? "text-center" : ""}`}>
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+      className={`mb-12 ${align === "center" ? "text-center" : ""}`}
+    >
       {eyebrow && <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">{eyebrow}</p>}
       <h2 className="mt-3 font-display text-4xl font-semibold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
         {title}
       </h2>
+    </motion.div>
+  );
+}
+
+function HomeMarquee({ direction = "left" }: { direction?: "left" | "right" }) {
+  const words = ["FASHION", "TECH", "LIFESTYLE", "SOVEREIGN", "NEW DROP", "LIMITED", "3D LAB", "RIKAMCHOT"];
+  return (
+    <div className="border-y border-border bg-card/40 py-3">
+      <Marquee speed={28} direction={direction} className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">
+        {words.map((w) => (
+          <span key={w} className="inline-flex items-center gap-4">
+            <span className="h-1.5 w-1.5 rounded-full bg-gold" />
+            {w}
+          </span>
+        ))}
+      </Marquee>
     </div>
   );
 }
@@ -224,6 +249,7 @@ function NewDrop({ product }: { product: StorefrontProduct }) {
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const scale = useTransform(scrollYProgress, [0, 1], [0.9, 1.05]);
   const opacity = useTransform(scrollYProgress, [0, 0.3, 0.8, 1], [0, 1, 1, 0.7]);
+  const newDropSlides: CarouselSlide[] = (product.images.length ? product.images : [product.image]).map((src) => ({ type: "image", src, alt: product.name }));
 
   return (
     <section ref={ref} className="relative overflow-hidden px-6 py-32 lg:px-12">
@@ -231,13 +257,13 @@ function NewDrop({ product }: { product: StorefrontProduct }) {
         <div className="grid items-center gap-12 lg:grid-cols-2">
           <TiltCard className="relative aspect-[3/4] overflow-hidden rounded-[2.5rem] bg-muted card-glow">
             <motion.div style={{ scale, opacity }} className="relative h-full w-full">
-              <Image src={product.image} alt={product.name} fill className="object-cover" unoptimized />
+              <Carousel slides={newDropSlides} autoPlay interval={4000} aspect="" className="h-full w-full rounded-[2.5rem]" />
               <motion.div
                 initial={{ opacity: 0, scale: 0 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.4 }}
-                className="absolute left-6 top-6"
+                className="absolute left-6 top-6 z-10"
               >
                 <Badge className="bg-background/90 text-foreground backdrop-blur-sm">New Drop</Badge>
               </motion.div>
@@ -399,6 +425,9 @@ function ShopByWorld() {
 }
 
 function EditorialStory({ product }: { product: StorefrontProduct }) {
+  const editorialSlides: CarouselSlide[] = (product.images.length ? product.images : [product.image]).map((src) => ({ type: "image", src, alt: product.name }));
+  editorialSlides.push({ type: "video", src: "/videos/hero-loop.mp4", alt: "Showreel" });
+
   return (
     <section className="relative overflow-hidden px-6 py-32 lg:px-12">
       <div className="mx-auto max-w-7xl">
@@ -411,10 +440,10 @@ function EditorialStory({ product }: { product: StorefrontProduct }) {
             className="relative lg:col-span-7"
           >
             <TiltCard className="relative aspect-[4/3] overflow-hidden rounded-[2rem]">
-              <Image src={product.image} alt="Editorial" fill className="object-cover" unoptimized />
+              <Carousel slides={editorialSlides} autoPlay interval={5000} aspect="" className="h-full w-full rounded-[2rem]" />
               <motion.div
                 whileHover={{ scale: 1.2 }}
-                className="absolute left-[20%] top-[40%] flex h-12 w-12 items-center justify-center rounded-full bg-gold text-ink shadow-lg"
+                className="absolute left-[20%] top-[40%] z-10 flex h-12 w-12 items-center justify-center rounded-full bg-gold text-ink shadow-lg"
                 data-cursor="view"
               >
                 <PulseRing />
@@ -621,12 +650,19 @@ function TechShowroom({ product }: { product: StorefrontProduct }) {
 }
 
 function LifestyleSpace({ products }: { products: StorefrontProduct[] }) {
+  const lifestyleSlides: CarouselSlide[] = [
+    { type: "image", src: "/products/lifestyle-4.jpg", alt: "Lifestyle space" },
+    { type: "image", src: "/products/lifestyle-2.jpg", alt: "Lifestyle detail" },
+    { type: "video", src: "/videos/hero-loop.mp4", alt: "Lifestyle film" },
+    { type: "image", src: "/products/lifestyle-5.jpg", alt: "Lifestyle object" },
+  ];
+
   return (
     <section className="px-6 py-32 lg:px-12">
       <div className="mx-auto max-w-7xl">
         <SectionHeading eyebrow="Lifestyle" title="Spatial commerce" />
         <div className="relative aspect-[16/9] overflow-hidden rounded-[2rem] border border-border bg-muted">
-          <Image src="/products/lifestyle-4.jpg" alt="Lifestyle space" fill className="object-cover" unoptimized />
+          <Carousel slides={lifestyleSlides} autoPlay interval={6000} aspect="" className="absolute inset-0 h-full w-full rounded-[2rem]" />
           <div className="absolute inset-0 bg-gradient-to-r from-background/70 via-transparent to-background/30" />
           {products.slice(0, 4).map((p, i) => (
             <motion.div
@@ -853,20 +889,25 @@ export function HomePage({ products }: { products: StorefrontProduct[] }) {
   return (
     <main className="bg-background">
       <HeroWorld />
+      <HomeMarquee />
       <EnterTheWorld />
+      <HomeMarquee direction="right" />
       <NewDrop product={newDrop} />
       <TrendingRail products={trending} />
       <Product3DLab />
       <ShopByWorld />
+      <HomeMarquee />
       <EditorialStory product={newDrop} />
       <CompleteTheLook products={lookProducts} />
-          <TechShowroom product={techProduct} />
-          <LifestyleSpace products={lifestyle} />
-          <LimitedDrop product={limited} />
-          <CommunityGrid />
-          <MembershipClub />
-          <BrandStory />
-          <FinalCTA />
+      <TechShowroom product={techProduct} />
+      <LifestyleSpace products={lifestyle} />
+      <LimitedDrop product={limited} />
+      <HomeMarquee direction="right" />
+      <CommunityGrid />
+      <MembershipClub />
+      <BrandStory />
+      <HomeMarquee />
+      <FinalCTA />
     </main>
   );
 }

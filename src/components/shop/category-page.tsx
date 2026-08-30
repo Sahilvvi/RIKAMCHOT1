@@ -11,6 +11,9 @@ import { ProductCard } from "@/components/product/product-card";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ProductGrid } from "@/components/product/product-grid";
+import { Marquee } from "@/components/ui/marquee";
+import { Carousel } from "@/components/ui/carousel";
+import type { CarouselSlide } from "@/components/ui/carousel";
 
 const categoryIcon: Record<string, React.ReactNode> = {
   fashion: <Shirt className="h-5 w-5" />,
@@ -30,9 +33,30 @@ const categoryIcon: Record<string, React.ReactNode> = {
 
 function SectionHeading({ eyebrow, title, align = "left" }: { eyebrow?: string; title: string; align?: "left" | "center" }) {
   return (
-    <div className={`mb-10 ${align === "center" ? "text-center" : ""}`}>
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+      className={`mb-10 ${align === "center" ? "text-center" : ""}`}
+    >
       {eyebrow && <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">{eyebrow}</p>}
       <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">{title}</h2>
+    </motion.div>
+  );
+}
+
+function CategoryMarquee({ direction = "left" }: { direction?: "left" | "right" }) {
+  return (
+    <div className="border-y border-border/50 bg-card/40 py-2.5">
+      <Marquee speed={26} direction={direction} className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">
+        {["Curated", "Verified Sellers", "Premium", "Cinematic", "3D Ready", "Fast Delivery", "Limited Drops", "RIKAMCHOT"].map((w) => (
+          <span key={w} className="inline-flex items-center gap-3">
+            <span className="h-1.5 w-1.5 rounded-full bg-gold" />
+            {w}
+          </span>
+        ))}
+      </Marquee>
     </div>
   );
 }
@@ -138,11 +162,14 @@ function EditorialBlock({ product }: { product: StorefrontProduct }) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const y = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
+  const editorialSlides: CarouselSlide[] = (product.images.length ? product.images : [product.image]).map((src) => ({ type: "image", src, alt: product.name }));
+  editorialSlides.push({ type: "video", src: "/videos/hero-loop.mp4", alt: "Showreel" });
+
   return (
     <section ref={ref} className="px-6 py-20 lg:px-10">
       <div className="mx-auto grid max-w-7xl gap-8 overflow-hidden rounded-3xl bg-muted lg:grid-cols-2 lg:gap-0">
         <motion.div style={{ y }} className="relative aspect-[4/3] lg:aspect-auto lg:h-full">
-          <Image src={product.image} alt={product.name} fill className="object-cover" unoptimized={product.image.startsWith("/")} />
+          <Carousel slides={editorialSlides} autoPlay interval={5000} aspect="" className="absolute inset-0 h-full w-full" />
         </motion.div>
         <motion.div
           initial={{ opacity: 0, x: 40 }}
@@ -249,8 +276,10 @@ export function CategoryPageClient({
   return (
     <main className="bg-background">
       {featured && <CategoryHero category={category} featured={featured} />}
+      <CategoryMarquee />
       <SubcategoryGrid categories={relatedCategories} current={category.slug} />
       <StatsBar count={products.length} collections={collections} />
+      <CategoryMarquee direction="right" />
       {trending.length > 0 && <TrendingRail products={trending} />}
       {editorial && <EditorialBlock product={editorial} />}
       <section className="px-6 py-16 lg:px-10">
@@ -259,6 +288,7 @@ export function CategoryPageClient({
           <ProductGrid products={products} />
         </div>
       </section>
+      <CategoryMarquee />
       <ValueCTA category={category} />
     </main>
   );

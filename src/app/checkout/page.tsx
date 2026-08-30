@@ -2,8 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { inr } from "@/lib/catalog";
 import { useCart } from "@/components/cart/cart-context";
+import { Marquee } from "@/components/ui/marquee";
 
 export default function CheckoutPage() {
   const { items, subtotal } = useCart();
@@ -13,9 +15,26 @@ export default function CheckoutPage() {
   return (
     <main className="min-h-screen px-6 pb-24 pt-28 lg:px-10">
       <div className="mx-auto max-w-7xl">
-        <h1 className="font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-          Checkout
-        </h1>
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <h1 className="font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+            Checkout
+          </h1>
+        </motion.div>
+
+        <div className="my-8 border-y border-border/50 bg-card/40 py-2.5">
+          <Marquee speed={30} className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">
+            {["Secure Checkout", "Free Shipping over ₹3,500", "7 Day Returns", "Verified Sellers", "RIKAMCHOT"].map((w) => (
+              <span key={w} className="inline-flex items-center gap-3">
+                <span className="h-1.5 w-1.5 rounded-full bg-gold" />
+                {w}
+              </span>
+            ))}
+          </Marquee>
+        </div>
 
         {items.length === 0 ? (
           <div className="mt-12 text-center text-muted-foreground">

@@ -4,23 +4,27 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, Search, Heart, User, ShoppingBag } from "lucide-react";
 import { useCart } from "@/components/cart/cart-context";
+import { useAuth } from "@/components/auth/auth-context";
 
-const nav = [
+const baseNav = [
   { label: "Home", icon: Home, href: "/" },
   { label: "Search", icon: Search, href: "/search" },
   { label: "Wishlist", icon: Heart, href: "/wishlist" },
-  { label: "Account", icon: User, href: "/account" },
 ];
 
 export function MobileNav() {
   const pathname = usePathname();
   const { openCart, count } = useCart();
+  const { user } = useAuth();
+
+  const accountHref = user ? "/account" : "/login";
+  const nav = [...baseNav, { label: user ? "Account" : "Login", icon: User, href: accountHref }];
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 glass-white md:hidden">
       <nav className="mx-auto flex max-w-md items-center justify-around px-2 pb-2 pt-2">
         {nav.map((item) => {
-          const active = pathname === item.href;
+          const active = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
           const Icon = item.icon;
           return (
             <Link

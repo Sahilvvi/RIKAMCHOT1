@@ -217,7 +217,7 @@ function buildStorefrontProduct(p: RawProduct, categoryMap: Map<string, Storefro
     .filter((m) => m.kind === "image" || !m.kind)
     .map((m) => m.url);
 
-  const image = mediaUrls[0] || "/products/product-1.jpg";
+  const image = mediaUrls[0] || "/products/fashion-1.jpg";
 
   const variants: ProductVariant[] = [];
   const sizesSet = new Set<string>();

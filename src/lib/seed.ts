@@ -22,16 +22,36 @@ export type RawSeedProduct = {
   popularity: number;
 };
 
-const imgs = [
-  "/products/product-1.jpg",
-  "/products/product-2.jpg",
-  "/products/product-3.jpg",
-  "/products/product-4.jpg",
-  "/products/product-5.jpg",
-  "/products/product-6.jpg",
-  "/products/product-7.jpg",
-  "/products/product-8.jpg",
+const fashionImgs = [
+  "/products/fashion-1.jpg",
+  "/products/fashion-2.jpg",
+  "/products/fashion-3.jpg",
+  "/products/fashion-4.jpg",
+  "/products/fashion-5.jpg",
+  "/products/fashion-6.jpg",
 ];
+
+const techImgs = [
+  "/products/tech-1.jpg",
+  "/products/tech-2.jpg",
+  "/products/tech-3.jpg",
+  "/products/tech-4.jpg",
+  "/products/tech-5.jpg",
+];
+
+const lifestyleImgs = [
+  "/products/lifestyle-1.jpg",
+  "/products/lifestyle-2.jpg",
+  "/products/lifestyle-3.jpg",
+  "/products/lifestyle-4.jpg",
+  "/products/lifestyle-5.jpg",
+];
+
+function imagePool(root: string) {
+  if (root === "tech") return techImgs;
+  if (root === "lifestyle") return lifestyleImgs;
+  return fashionImgs;
+}
 
 function slugify(name: string) {
   return name
@@ -106,9 +126,15 @@ function categorySlug(name: string) {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 }
 
+const categoryCounters: Record<string, number> = {};
+
 export const SEED_PRODUCTS: StorefrontProduct[] = rawSeed.map((p, i) => {
   const id = `rc-${(i + 1).toString().padStart(3, "0")}`;
-  const image = imgs[i % imgs.length];
+  const pool = imagePool(p.rootCategory);
+  const count = categoryCounters[p.rootCategory] || 0;
+  categoryCounters[p.rootCategory] = count + 1;
+  const image = pool[count % pool.length];
+  const nextImage = pool[(count + 1) % pool.length];
   const slug = slugify(p.name);
   const raw = { ...p, id, image } as RawSeedProduct;
   const badges: string[] = [];
@@ -130,7 +156,7 @@ export const SEED_PRODUCTS: StorefrontProduct[] = rawSeed.map((p, i) => {
     compareAtPrice: p.compareAt,
     currency: "INR",
     image,
-    images: [image, imgs[(i + 1) % imgs.length]],
+    images: [image, nextImage],
     sizes: p.sizes,
     colors: p.colors,
     material: p.material,

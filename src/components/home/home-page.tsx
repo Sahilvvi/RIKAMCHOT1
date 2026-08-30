@@ -135,9 +135,9 @@ function HeroWorld({ products }: { products: StorefrontProduct[] }) {
 
 function EnterTheWorld() {
   const worlds = [
-    { id: "fashion", title: "Fashion", subtitle: "Streetwear, footwear & accessories", icon: Shirt, image: "/products/product-1.jpg", color: "from-pink/10" },
-    { id: "tech", title: "Tech", subtitle: "Audio, wearables & smart devices", icon: Headphones, image: "/products/product-4.jpg", color: "from-cool-metallic/20" },
-    { id: "lifestyle", title: "Lifestyle", subtitle: "Objects for the spaces you live in", icon: Sofa, image: "/products/product-7.jpg", color: "from-gold/10" },
+    { id: "fashion", title: "Fashion", subtitle: "Streetwear, footwear & accessories", icon: Shirt, image: "/products/fashion-2.jpg", color: "from-pink/10" },
+    { id: "tech", title: "Tech", subtitle: "Audio, wearables & smart devices", icon: Headphones, image: "/products/tech-1.jpg", color: "from-cool-metallic/20" },
+    { id: "lifestyle", title: "Lifestyle", subtitle: "Objects for the spaces you live in", icon: Sofa, image: "/products/lifestyle-2.jpg", color: "from-gold/10" },
   ];
 
   return (
@@ -247,10 +247,17 @@ function TrendingRail({ products }: { products: StorefrontProduct[] }) {
           className="flex cursor-grab gap-4 px-6 active:cursor-grabbing lg:px-12"
           data-cursor="drag"
         >
-          {products.map((product) => (
-            <div key={product.id} className="w-[75vw] flex-shrink-0 sm:w-[45vw] lg:w-[30vw]">
+          {products.map((product, i) => (
+            <motion.div
+              key={product.id}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.5, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+              className="w-[75vw] flex-shrink-0 sm:w-[45vw] lg:w-[30vw]"
+            >
               <ProductCard product={product} />
-            </div>
+            </motion.div>
           ))}
         </motion.div>
       </div>
@@ -260,13 +267,13 @@ function TrendingRail({ products }: { products: StorefrontProduct[] }) {
 
 function ShopByWorld() {
   const worlds = [
-    { name: "Street", image: "/products/product-1.jpg" },
-    { name: "Tech", image: "/products/product-4.jpg" },
-    { name: "Home", image: "/products/product-7.jpg" },
-    { name: "Travel", image: "/products/product-3.jpg" },
-    { name: "Workspace", image: "/products/product-6.jpg" },
-    { name: "Night", image: "/products/product-2.jpg" },
-    { name: "Weekend", image: "/products/product-5.jpg" },
+    { name: "Street", image: "/products/fashion-1.jpg" },
+    { name: "Tech", image: "/products/tech-3.jpg" },
+    { name: "Home", image: "/products/lifestyle-4.jpg" },
+    { name: "Travel", image: "/products/lifestyle-3.jpg" },
+    { name: "Workspace", image: "/products/tech-5.jpg" },
+    { name: "Night", image: "/products/fashion-5.jpg" },
+    { name: "Weekend", image: "/products/fashion-6.jpg" },
   ];
 
   return (
@@ -378,7 +385,7 @@ function CompleteTheLook({ products }: { products: StorefrontProduct[] }) {
         <SectionHeading eyebrow="Fashion" title="Complete the look" />
         <div className="grid gap-8 lg:grid-cols-2">
           <div className="relative aspect-[3/4] overflow-hidden rounded-[2rem] bg-muted">
-            <Image src={products[0]?.image || "/products/product-1.jpg"} alt="Look" fill className="object-cover" unoptimized />
+            <Image src={products[0]?.image || "/products/fashion-1.jpg"} alt="Look" fill className="object-cover" unoptimized />
             {products.slice(1, 4).map((p, i) => (
               <motion.button
                 key={p.id}
@@ -538,7 +545,7 @@ function LifestyleSpace({ products }: { products: StorefrontProduct[] }) {
       <div className="mx-auto max-w-7xl">
         <SectionHeading eyebrow="Lifestyle" title="Spatial commerce" />
         <div className="relative aspect-[16/9] overflow-hidden rounded-[2rem] border border-border bg-muted">
-          <Image src="/products/product-7.jpg" alt="Lifestyle space" fill className="object-cover" unoptimized />
+          <Image src="/products/lifestyle-4.jpg" alt="Lifestyle space" fill className="object-cover" unoptimized />
           <div className="absolute inset-0 bg-gradient-to-r from-background/60 via-transparent to-background/20" />
           {products.slice(0, 4).map((p, i) => (
             <motion.div
@@ -613,7 +620,7 @@ function LimitedDrop({ product }: { product: StorefrontProduct }) {
 }
 
 function CommunityGrid() {
-  const images = ["/products/product-1.jpg", "/products/product-2.jpg", "/products/product-3.jpg", "/products/product-5.jpg", "/products/product-6.jpg", "/products/product-8.jpg"];
+  const images = ["/products/fashion-1.jpg", "/products/tech-1.jpg", "/products/lifestyle-2.jpg", "/products/fashion-4.jpg", "/products/tech-5.jpg", "/products/lifestyle-5.jpg"];
   return (
     <section className="px-6 py-24 lg:px-12">
       <div className="mx-auto max-w-7xl">

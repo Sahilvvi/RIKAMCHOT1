@@ -9,6 +9,8 @@ import { CartDrawer } from "@/components/cart/cart-drawer";
 import { WishlistProvider } from "@/components/wishlist/wishlist-context";
 import { PageTransition } from "@/components/layout/page-transition";
 import { CustomCursor } from "@/components/layout/custom-cursor";
+import { ScrollProgress } from "@/components/layout/scroll-progress";
+import { AmbientMotion } from "@/components/layout/ambient-motion";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -55,6 +57,8 @@ export default function RootLayout({
         <CartProvider>
           <WishlistProvider>
             <Header />
+            <ScrollProgress />
+            <AmbientMotion />
             <PageTransition>{children}</PageTransition>
             <CustomCursor />
             <CartDrawer />

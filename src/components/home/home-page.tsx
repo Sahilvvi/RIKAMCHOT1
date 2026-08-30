@@ -291,7 +291,6 @@ function NewDrop({ product }: { product: StorefrontProduct }) {
 }
 
 function TrendingRail({ products }: { products: StorefrontProduct[] }) {
-  const containerRef = useRef<HTMLDivElement>(null);
   return (
     <section className="py-24">
       <div className="mx-auto max-w-7xl px-6 lg:px-12">
@@ -302,14 +301,8 @@ function TrendingRail({ products }: { products: StorefrontProduct[] }) {
           </Link>
         </div>
       </div>
-      <div ref={containerRef} className="overflow-hidden">
-        <motion.div
-          drag="x"
-          dragConstraints={containerRef}
-          dragElastic={0.1}
-          className="flex cursor-grab gap-5 px-6 active:cursor-grabbing lg:px-12"
-          data-cursor="drag"
-        >
+      <div className="overflow-x-auto pb-2 no-scrollbar snap-x snap-mandatory">
+        <div className="flex w-max gap-5 px-6 lg:px-12">
           {products.map((product, i) => (
             <motion.div
               key={product.id}
@@ -317,12 +310,12 @@ function TrendingRail({ products }: { products: StorefrontProduct[] }) {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.6, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
-              className="w-[75vw] flex-shrink-0 sm:w-[45vw] lg:w-[30vw]"
+              className="w-[75vw] flex-shrink-0 snap-start sm:w-[45vw] lg:w-[30vw]"
             >
               <ProductCard product={product} index={i} />
             </motion.div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

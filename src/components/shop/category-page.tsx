@@ -132,13 +132,12 @@ function SubcategoryGrid({ categories, current }: { categories: StorefrontCatego
 }
 
 function TrendingRail({ products }: { products: StorefrontProduct[] }) {
-  const ref = useRef<HTMLDivElement>(null);
   return (
     <section className="px-6 py-16 lg:px-10">
       <div className="mx-auto max-w-7xl">
         <SectionHeading eyebrow="Trending now" title="Most wanted" />
-        <motion.div ref={ref} whileTap={{ cursor: "grabbing" }} className="overflow-hidden">
-          <motion.div drag="x" dragConstraints={ref} className="flex gap-5 pb-4" data-cursor="drag">
+        <div className="overflow-x-auto pb-2 no-scrollbar snap-x snap-mandatory">
+          <div className="flex w-max gap-5">
             {products.slice(0, 6).map((product, i) => (
               <motion.div
                 key={product.id}
@@ -146,13 +145,13 @@ function TrendingRail({ products }: { products: StorefrontProduct[] }) {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="w-[72vw] flex-shrink-0 sm:w-[45vw] lg:w-[28vw]"
+                className="w-[72vw] flex-shrink-0 snap-start sm:w-[45vw] lg:w-[28vw]"
               >
                 <ProductCard product={product} index={i} />
               </motion.div>
             ))}
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       </div>
     </section>
   );

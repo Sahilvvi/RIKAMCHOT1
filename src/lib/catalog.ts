@@ -464,14 +464,8 @@ export async function getRecommendedProducts(
   const sameRoot = others
     .filter((p) => normalizeRootCategory(p.rootCategory) === root)
     .sort(byPopularity);
-  const sameCollection = others
-    .filter((p) => normalizeRootCategory(p.rootCategory) !== root && p.collection === product.collection)
-    .sort(byPopularity);
-  const rest = others
-    .filter((p) => normalizeRootCategory(p.rootCategory) !== root && p.collection !== product.collection)
-    .sort(byPopularity);
 
-  return [...sameRoot, ...sameCollection, ...rest].slice(0, limit);
+  return sameRoot.slice(0, limit);
 }
 
 export async function searchProducts(query: string, limit: number = 20): Promise<StorefrontProduct[]> {

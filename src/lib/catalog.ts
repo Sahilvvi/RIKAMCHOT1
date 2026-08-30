@@ -192,9 +192,10 @@ function buildStorefrontProduct(p: RawProduct, categoryMap: Map<string, Storefro
         }
       : categoryMap.get(p.category_id) || { id: p.category_id, slug: "fashion", name: "Fashion", position: 0 };
 
-  const rootCategory = category.parentId
+  const computedRoot = category.parentId
     ? categoryMap.get(category.parentId)?.slug || category.slug
     : category.slug;
+  const rootCategory = normalizeRootCategory(computedRoot) || normalizeRootCategory(category.slug) || "fashion";
 
   const variantsRows = asArray(p.product_variants);
   const mediaRows = asArray(p.product_media).sort((a, b) => (a.position ?? 0) - (b.position ?? 0));
@@ -442,24 +443,35 @@ export async function getProductBySlug(slug: string): Promise<StorefrontProduct 
   return SEED_PRODUCTS.find((p) => p.slug === slug);
 }
 
+function normalizeRootCategory(root: string): string {
+  const r = root.toLowerCase();
+  if (["fashion", "clothing", "apparel"].includes(r) || ["t-shirts", "polos", "hoodies", "sweatshirts", "bottoms", "footwear", "accessories"].includes(r)) return "fashion";
+  if (["tech", "technology", "electronics", "gadgets"].includes(r) || ["audio", "wearables", "smartphones", "gaming", "computer-accessories"].includes(r)) return "tech";
+  if (["lifestyle", "home", "living"].includes(r) || ["lighting", "desk", "travel", "kitchen"].includes(r)) return "lifestyle";
+  return root;
+}
+
 export async function getRecommendedProducts(
   product: StorefrontProduct,
   limit: number = 6
 ): Promise<StorefrontProduct[]> {
   const all = await getProducts();
-  const scored = all
-    .filter((p) => p.id !== product.id)
-    .map((p) => {
-      let score = 0;
-      if (p.rootCategory === product.rootCategory) score += 3;
-      if (p.collection === product.collection) score += 2;
-      if (p.categorySlug === product.categorySlug) score += 1;
-      return { p, score };
-    })
-    .sort((a, b) => b.score - a.score || b.p.popularity - a.p.popularity)
-    .slice(0, limit)
-    .map((s) => s.p);
-  return scored;
+  const root = normalizeRootCategory(product.rootCategory);
+  const others = all.filter((p) => p.id !== product.id);
+
+  const byPopularity = (a: StorefrontProduct, b: StorefrontProduct) => b.popularity - a.popularity;
+
+  const sameRoot = others
+    .filter((p) => normalizeRootCategory(p.rootCategory) === root)
+    .sort(byPopularity);
+  const sameCollection = others
+    .filter((p) => normalizeRootCategory(p.rootCategory) !== root && p.collection === product.collection)
+    .sort(byPopularity);
+  const rest = others
+    .filter((p) => normalizeRootCategory(p.rootCategory) !== root && p.collection !== product.collection)
+    .sort(byPopularity);
+
+  return [...sameRoot, ...sameCollection, ...rest].slice(0, limit);
 }
 
 export async function searchProducts(query: string, limit: number = 20): Promise<StorefrontProduct[]> {

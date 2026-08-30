@@ -72,7 +72,7 @@ export function ProductDetail({
 }) {
   const { addItem, openCart } = useCart();
   const { toggle, isInWishlist } = useWishlist();
-  const [selectedSize, setSelectedSize] = useState(product.sizes.length === 1 ? product.sizes[0] : "");
+  const [selectedSize, setSelectedSize] = useState(product.sizes[0] || "");
   const [selectedColor, setSelectedColor] = useState(product.colors[0]?.name || "");
   const [quantity, setQuantity] = useState(1);
   const [activeImage, setActiveImage] = useState(0);
@@ -395,7 +395,7 @@ export function ProductDetail({
                     </p>
                   </div>
                   <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-muted">
-                    <Image src={product.image} alt={product.name} fill className="object-cover" unoptimized={product.image.startsWith("/")} />
+                    <Image src={product.images[1] || product.image} alt={product.name} fill className="object-cover" unoptimized={product.image.startsWith("/")} />
                   </div>
                 </motion.div>
               )}
